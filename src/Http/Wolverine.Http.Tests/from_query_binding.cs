@@ -184,4 +184,30 @@ public class from_query_binding : IntegrationContext
         (await forQuerystring("name=Jones&number=95&Aliased=foo")).ValueWithAlias.ShouldBe("foo");
         (await forQuerystring("name=Jones&number=95&valueWithAlias=foo")).ValueWithAlias.ShouldBeNull();
     }
+
+    [Fact]
+    public async Task collection_with_alias()
+    {
+        (await forQuerystring("name=Jones&number=95&aliases=foo1&aliases=foo2")).CollectionWithAlias.ShouldBe(["foo1", "foo2"]);
+        (await forQuerystring("name=Jones&number=95&Aliases=foo1&Aliases=foo2")).CollectionWithAlias.ShouldBe(["foo1", "foo2"]);
+        (await forQuerystring("name=Jones&number=95&CollectionWithAlias=foo1&CollectionWithAlias=foo2")).CollectionWithAlias.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task record_with_alias()
+    {
+        var result = await Scenario(x =>
+        {
+            x.Get
+                .Url("/api/record")
+                .QueryString("v", "value")
+                .QueryString("vs", "1")
+                .QueryString("vs", "2")
+                .QueryString("vs", "3");
+        });
+
+        var query = result.ReadAsJson<AliasedRecord>();
+        query.Value.ShouldBe("value");
+        query.Values.ShouldBe(["1", "2", "3"]);
+    }
 }

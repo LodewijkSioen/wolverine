@@ -162,7 +162,16 @@ public class AsParametersQuery{
     [FromForm]
     public bool BooleanFromForm { get; set; }
     public bool BooleanNotUsed { get; set; }
-    
+    [FromQuery]
+    public string[] CollectionFromQuery { get; set; }
+    [FromForm]
+    public string[] CollectionFromForm { get; set; }
+    public string[] CollectionNotUsed { get; set; }
+    [FromForm(Name = "aliased-from-form")]
+    public string AliasedFromForm { get; set; }
+    [FromQuery(Name = "aliased-from-query")]
+    public string AliasedFromQuery { get; set; }
+
     [FromHeader(Name = "x-string")]
     public string StringHeader { get; set; }
 
@@ -215,6 +224,9 @@ public static class AsParametersEndpoints2{
 public record AsParameterRecord(
     [FromRoute] string Id,
     [FromQuery] int Number,
+    [FromQuery] string[] Collection, 
+    [FromQuery(Name = "a")] string Aliased,
+    [FromQuery(Name = "v")] string[] Aliases,
     [FromHeader(Name = "x-direction")] Direction Direction,
     [FromForm(Name = "test")] bool IsTrue);
 

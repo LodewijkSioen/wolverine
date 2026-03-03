@@ -1,7 +1,6 @@
 using JasperFx.Core;
 using Marten;
 using Microsoft.AspNetCore.Mvc;
-using Spectre.Console;
 using Wolverine.Http;
 
 namespace WolverineWebApi;
@@ -90,6 +89,9 @@ public static class FromQueryEndpoints
 
     [WolverineGet("/api/bigquery")]
     public static BigQuery Get([FromQuery] BigQuery query) => query;
+
+    [WolverineGet("/api/record")]
+    public static AliasedRecord Get([FromQuery] AliasedRecord query) => query;
 }
 
 
@@ -118,8 +120,14 @@ public class BigQuery
     [FromForm(Name = "aliased")]
     public string? ValueWithAlias { get; set; }
 
+    [FromQuery(Name = "aliases")]
+    [FromForm(Name = "aliases")]
+    public string[] CollectionWithAlias { get; set; }
+
     public List<string> ListValues { get; set; } = new();
     public List<Direction> EnumListValues { get; set; } = new();
 
     public List<int> IntList { get; set; }
 }
+
+public record AliasedRecord([FromQuery(Name = "v")]string Value, [FromQuery(Name = "vs")]string[] Values);

@@ -26,13 +26,19 @@ public class asparameters_binding : IntegrationContext
                 { "IntegerFromForm", "2" },
                 { "FloatFromForm", "2.2" },
                 { "BooleanFromForm", "true" },
-                { "StringNotUsed", "string3" }
+                { "CollectionFromForm", "1" },
+                //{ "CollectionFromForm", "2" }, -> not supported by Alba :(
+                { "StringNotUsed", "string3" },
+                { "aliased-from-form", "aliasform" }
             }).QueryString("EnumFromQuery", "west")
             .QueryString("StringFromQuery", "string1")
             .QueryString("IntegerFromQuery", "1")
             .QueryString("FloatFromQuery", "1.1")
             .QueryString("BooleanFromQuery", "true")
+            .QueryString("CollectionFromQuery", "1")
+            .QueryString("CollectionFromQuery", "2")
             .QueryString("IntegerNotUsed", "3")
+            .QueryString("aliased-from-query", "aliasquery")
             .ToUrl("/api/asparameters1")
         );
         var response = result.ReadAsJson<AsParametersQuery>();
@@ -41,16 +47,21 @@ public class asparameters_binding : IntegrationContext
         response.IntegerFromForm.ShouldBe(2);
         response.FloatFromForm.ShouldBe(2.2f);
         response.BooleanFromForm.ShouldBeTrue();
+        response.AliasedFromForm.ShouldBe("aliasform");
+        response.CollectionFromForm.ShouldBe(["1"]);
         response.EnumFromQuery.ShouldBe(Direction.West);
         response.StringFromQuery.ShouldBe("string1");
         response.IntegerFromQuery.ShouldBe(1);
         response.FloatFromQuery.ShouldBe(1.1f);
         response.BooleanFromQuery.ShouldBeTrue();
+        response.AliasedFromQuery.ShouldBe("aliasquery");
+        response.CollectionFromQuery.ShouldBe(["1", "2"]);
         response.EnumNotUsed.ShouldBe(default);
         response.StringNotUsed.ShouldBe(default);
         response.IntegerNotUsed.ShouldBe(default);
         response.FloatNotUsed.ShouldBe(default);
         response.BooleanNotUsed.ShouldBe(default);
+        response.CollectionNotUsed.ShouldBe(default);
 
         #endregion
     }
@@ -152,6 +163,11 @@ public class asparameters_binding : IntegrationContext
         {
             x.Post.FormData(new Dictionary<string, string> { { "test", "true" } })
                 .QueryString("Number", "2")
+                .QueryString("Collection", "1")
+                .QueryString("Collection", "2")
+                .QueryString("a", "alias")
+                .QueryString("v", "alias1")
+                .QueryString("v", "alias2")
                 .ToUrl("/asparameterrecord/idvalue");
 
             x.WithRequestHeader("x-direction", "East");
@@ -162,6 +178,9 @@ public class asparameters_binding : IntegrationContext
         value.Number.ShouldBe(2);
         value.Direction.ShouldBe(Direction.East);
         value.IsTrue.ShouldBeTrue();
+        value.Collection.ShouldBe(["1", "2"]);
+        value.Aliased.ShouldBe("alias");
+        value.Aliases.ShouldBe(["alias1", "alias2"]);
     }
 
     [Fact]
