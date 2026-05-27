@@ -537,7 +537,7 @@ internal partial class TrackedSession : ITrackedSession
         var activity = $"Activity:\n{AllRecordsInOrder().Select(x => x.ToString()).Join("\n")}";
         var exceptions = $"Exceptions:\n{_exceptions.Select(x => x.ToString()).Join("\n")}";
 
-        return $"{conditions}\n\n{activity}\\{exceptions}";
+        return $"{conditions}\n\n{activity}\n\n{exceptions}";
     }
 
     public void IgnoreMessageTypes(Func<Type, bool> filter)
